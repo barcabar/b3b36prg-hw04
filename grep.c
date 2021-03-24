@@ -11,16 +11,61 @@ enum {
 };
 
 
+int findStr(char *pattern,char *line);
 
-int findStr(char *str, char *line){
-    int i = 0;
-    while (line[i] != '\0') {
-        if (line[i] == str[0]) {
-            int counter = 0;
-            while (line[counter] == line[counter + i]) {
-                counter++;
+int main(int argc, char* argv[]) {
+
+    // Jestlize se program spatne zavola,
+    // ukonci se
+    if (argc > 3){
+        fprintf(stderr, "Too many arguments\n");
+        return FAIL;
+    } else if (argc < 3){
+        fprintf(stderr, "Lack of arguments\n");
+        return FAIL;
+        // kdyz je spravny pocet argumentu
+        // program pokracuje
+    } else {
+        char *pattern = argv[1];
+        // char *pattern = "MemFr";
+        FILE * fileP;
+        char *file = argv[2];
+//    char *file = "text.txt";
+        fileP = fopen(file, "r");
+        char str[SIZE];
+
+
+        if (fileP == NULL ) {
+            fprintf(stderr,"Failed to open.\n");
+            return FAIL;
+        } else {
+            while(fgets (str, SIZE, fileP) != NULL )
+            {
+                if (findStr(pattern, str) == 1){
+                    printf("%s",str);
+                    return OK;
+                }
             }
-            return (str[counter] == '\n' || str[counter] == '\0' ? 1 : 0);
+            fclose(fileP) ;
+
+        }
+        free(fileP);
+        free(file);
+        free(pattern);
+    }
+
+    return OK;
+}
+
+int findStr(char *pattern, char *line) {
+    int i=0;
+    while(line[i]!='\0'){
+        if(line[i]== pattern[0]){
+            int size = 0;
+            while(line[size + i] == pattern[size]){
+                size++;
+            }
+            return ( (pattern[size]=='\n' || pattern[size]=='\0') ? 1 : 0 );
         }
         i++;
     }
@@ -28,40 +73,3 @@ int findStr(char *str, char *line){
 }
 
 
-int main(int argc, char* argv[]) {
-    // Jestlize se program spatne zavola -> ukonci se
-    if (argc > 3){
-        fprintf(stderr, "Too many arguments\n");
-        return FAIL;
-    }
-    if (argc < 3){
-        fprintf(stderr, "Lack of arguments\n");
-        return FAIL;
-    }
-
-
-    char *pattern = argv[1];
-    char *file = argv[2];
-    FILE * fileP;
-    fileP = fopen(file, "r");
-    char str[SIZE];
-
-
-    if (fileP == NULL ) {
-        fprintf(stderr,"File failed to open.\n");
-        return FAIL;
-    } else {
-        printf("The file is now opened.\n") ;
-        while(fgets (str, SIZE, fileP) != NULL )
-        {
-            if (findStr(pattern, str) == 1){
-                printf("%s",str);
-                return OK;
-            }
-        }
-        fclose(fileP) ;
-        printf("\nData successfully read from\n");
-
-    }
-    return OK;
-}

@@ -28,9 +28,10 @@ int main(int argc, char* argv[]) {
         // kdyz je spravny pocet argumentu
         // program pokracuje
     } else {
-        char *pattern = argv[1]; // hledane slovo
+
+        char *pattern = argv[1]; // hledane slovo?
         FILE * fileP;
-        char *file = argv[2];
+        char *file = argv[2]; // v jake slozce?
         const char *mode = "r"; // cteni
         fileP = fopen(file, mode);
         char str[SIZE];
@@ -49,6 +50,7 @@ int main(int argc, char* argv[]) {
             fprintf(stderr, "Failed to open.\n");
             return FAIL;
         }
+        // uvolneni pameti
         free(fileP);
         free(file);
         free(pattern);
@@ -57,7 +59,7 @@ int main(int argc, char* argv[]) {
     return OK;
 }
 
-
+// spocitani poctu prvku
 size_t strLen(const char* str){
     int size = 0;
     while (str[size++]);

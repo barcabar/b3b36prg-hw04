@@ -11,6 +11,7 @@ enum {
 };
 
 
+size_t strLen(const char* str);
 int findStr(char *pattern,char *line);
 
 int main(int argc, char* argv[]) {
@@ -23,31 +24,30 @@ int main(int argc, char* argv[]) {
     } else if (argc < 3){
         fprintf(stderr, "Lack of arguments\n");
         return FAIL;
+
         // kdyz je spravny pocet argumentu
         // program pokracuje
     } else {
-        char *pattern = argv[1];
-        // char *pattern = "MemFr";
+        char *pattern = argv[1]; // hledane slovo
         FILE * fileP;
         char *file = argv[2];
-//    char *file = "text.txt";
-        fileP = fopen(file, "r");
+        const char *mode = "r"; // cteni
+        fileP = fopen(file, mode);
         char str[SIZE];
 
 
-        if (fileP == NULL ) {
-            fprintf(stderr,"Failed to open.\n");
-            return FAIL;
-        } else {
-            while(fgets (str, SIZE, fileP) != NULL )
-            {
-                if (findStr(pattern, str) == 1){
-                    printf("%s",str);
+        if (!(fileP == NULL)) {
+            while (fgets(str, SIZE, fileP) != NULL) {
+                if (findStr(pattern, str) == 1) {
+                    printf("%s", str);
                     return OK;
                 }
             }
-            fclose(fileP) ;
+            fclose(fileP);
 
+        } else {
+            fprintf(stderr, "Failed to open.\n");
+            return FAIL;
         }
         free(fileP);
         free(file);
@@ -57,17 +57,27 @@ int main(int argc, char* argv[]) {
     return OK;
 }
 
+
+size_t strLen(const char* str){
+    int size = 0;
+    while (str[size++]);
+    return size;
+}
+
+
+// funkce vraci 1
+// pokud je shoda
 int findStr(char *pattern, char *line) {
-    int i=0;
-    while(line[i]!='\0'){
-        if(line[i]== pattern[0]){
+    for (int i = 0; i < strLen(line); i++) {
+        if (line[i] != pattern[0]) {
+            i++;
+        } else {
             int size = 0;
-            while(line[size + i] == pattern[size]){
+            while (line[size + i] == pattern[size]) {
                 size++;
             }
-            return ( (pattern[size]=='\n' || pattern[size]=='\0') ? 1 : 0 );
+            return ((pattern[size] == '\n' || pattern[size] == '\0') ? 1 : 0);
         }
-        i++;
     }
     return 0;
 }
